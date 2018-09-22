@@ -9,6 +9,9 @@ extern crate serde_yaml;
 extern crate serde_json;
 extern crate yaml_rust;
 extern crate reqwest;
+extern crate url;
+extern crate crypto;
+extern crate base64;
 
 mod setting_loader;
 mod routes;

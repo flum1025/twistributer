@@ -1,7 +1,7 @@
 use std::fs;
 use std::io::Read;
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ApiKey {
     pub consumer_key: String,
     pub consumer_secret: String,
@@ -9,7 +9,7 @@ pub struct ApiKey {
     pub access_token_secret: String,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct App {
     pub api_key: ApiKey,
 }
@@ -21,7 +21,7 @@ pub struct User {
     pub endpoints: Vec<String>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Setting {
     pub app: App,
     pub users: Vec<User>,

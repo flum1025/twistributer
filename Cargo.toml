@@ -20,6 +20,11 @@ tokio = "0.1.8"
 serde_yaml = "0.8.4"
 serde_derive = "1.0.79"
 serde = "1.0.79"
+base64 = "0.9.3"
+hmac = "0.6.3"
+sha2 = "0.7.1"
+url = "1.7.1"
+rust-crypto = "0.2.36"
 
 [features]
 default = ['clippy']
