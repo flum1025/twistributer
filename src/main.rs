@@ -1,18 +1,23 @@
-#[macro_use]
-extern crate log;
+#[macro_use] extern crate log;
+#[macro_use] extern crate serde_derive;
+extern crate serde;
 extern crate iron;
 extern crate logger;
 extern crate env_logger;
 extern crate router;
+extern crate serde_yaml;
+extern crate serde_json;
 extern crate yaml_rust;
-
-use std::collections::HashMap;
-use iron::prelude::*;
-use logger::Logger;
-use router::Router;
+extern crate reqwest;
 
 mod setting_loader;
 mod routes;
+mod app;
+
+use iron::prelude::*;
+use logger::Logger;
+use router::Router;
+use self::setting_loader::Setting;
 
 const SETTING_FILE: &str = "setting.yml";
 
@@ -23,7 +28,7 @@ fn main() {
     start_server(setting);
 }
 
-fn start_server(setting: HashMap<String, Vec<String>>) {
+fn start_server(setting: Setting) {
     let mut router = Router::new();
     routes::init(&mut router, setting);
 

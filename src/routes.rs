@@ -1,15 +1,12 @@
-extern crate serde_json;
-
 use std::io::Read;
 use iron::status;
 use iron::prelude::*;
 use router::Router;
-use std::collections::HashMap;
 use serde_json::Value;
+use crate::setting_loader::{Setting, User};
+use crate::app;
 
-mod app;
-
-pub fn init(router: &mut Router, setting: HashMap<String, Vec<String>>) {
+pub fn init(router: &mut Router, setting: Setting) {
     router.get("/", index, "index");
     router.post("/webhook", generate_webhook(setting), "webhook");
     router.get("/webhook", check_crc, "crc test");
@@ -37,18 +34,25 @@ fn check_crc(_: &mut Request) -> IronResult<Response> {
     Ok(Response::with((status::Ok, "ok")))
 }
 
+fn find_user(users: Vec<User>, body: String) -> Option<User> {
+    let v: Value = serde_json::from_str(&body).unwrap();
+    let user_id: &str = v["for_user_id"].as_str().unwrap();
+    let user = users.into_iter().find(|user| user.user_id == user_id);
 
-fn generate_webhook(setting: HashMap<String, Vec<String>>) -> impl Fn(&mut Request) -> IronResult<Response> {
+    return user;
+}
+
+fn generate_webhook(setting: Setting) -> impl Fn(&mut Request) -> IronResult<Response> {
     move |req| {
         let body = get_body(req);
-        let v: Value = serde_json::from_str(&body).unwrap();
-        let user_id: &str = v["for_user_id"].as_str().unwrap();
-        let endpoints = setting.get(user_id);
-
         debug!("{:?} {:?}", req.url.to_string(), body);
 
-        if let Some(value) = endpoints {
-            app::delivery(user_id.to_string(), body, value.to_vec());
+        let user = find_user(setting.users.to_vec(), body.clone());
+        println!("{:?}", user);
+
+
+        if let Some(value) = user {
+            app::delivery(value, body);
         }
 
         Ok(Response::with((status::Ok, "ok")))

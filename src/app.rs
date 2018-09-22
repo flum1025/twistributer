@@ -1,10 +1,9 @@
-extern crate reqwest;
-
 use std::time::Duration;
 use std::thread;
 use std::thread::JoinHandle;
 use reqwest::header::CONTENT_TYPE;
 use reqwest::{Client, Response, Error};
+use crate::setting_loader::User;
 
 const TIMEOUT: u64 = 5;
 
@@ -19,14 +18,14 @@ fn request(endpoint: String, body: String) -> std::result::Result<Response, Erro
         .send();
 }
 
-pub fn delivery(user_id: String, body: String, endpoints: Vec<String>) {
+pub fn delivery(user: User, body: String) {
     let mut children: Vec<JoinHandle<()>> = vec![];
 
-    for endpoint in endpoints {
-        let cloned_user_id = user_id.clone();
+    for endpoint in user.endpoints {
+        let cloned_name = user.name.clone();
         let cloned_body = body.clone();
         children.push(thread::spawn(move || {
-            info!("{} : {}", cloned_user_id, endpoint);
+            info!("{} : {}", cloned_name, endpoint);
             let res = request(endpoint, cloned_body);
 
             match res {

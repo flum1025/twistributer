@@ -1,25 +1,37 @@
 use std::fs;
 use std::io::Read;
-use yaml_rust::YamlLoader;
-use std::collections::HashMap;
 
-pub fn load(file: &str) -> HashMap<String, Vec<String>> {
-    let string = file_read(file);
-    let yaml = YamlLoader::load_from_str(&string.to_owned()).unwrap();
-    let setting = &yaml[0];
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct ApiKey {
+    pub consumer_key: String,
+    pub consumer_secret: String,
+    pub access_token: String,
+    pub access_token_secret: String,
+}
 
-    let mut map: HashMap<String, Vec<String>> = HashMap::new();
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct App {
+    pub api_key: ApiKey,
+}
 
-    for (key, value) in setting.as_hash().unwrap().iter() {
-        let mut ips: Vec<String> = Vec::new();
-        for v in value.as_vec().unwrap() {
-            ips.push(v.as_str().unwrap().to_string());
-        }
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct User {
+    pub name: String,
+    pub user_id: String,
+    pub endpoints: Vec<String>,
+}
 
-        map.insert(key.as_i64().unwrap().to_string(), ips);
-    }
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Setting {
+    pub app: App,
+    pub users: Vec<User>,
+}
 
-    return map;
+pub fn load(file: &str) -> Setting {
+    let data = file_read(file);
+    let setting: Setting = serde_yaml::from_str(&data).unwrap();
+
+    return setting;
 }
 
 fn file_read(file: &str) -> String {
