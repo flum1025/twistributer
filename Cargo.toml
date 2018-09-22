@@ -1,0 +1,15 @@
+[package]
+name = "twistributer"
+version = "0.1.0"
+authors = ["flum1025 <flum.1025@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+clippy = { version = "*", optional = true, git = "https://github.com/rust-lang-nursery/rust-clippy" }
+cargo-make = "0.14.0"
+iron = "0.6.0"
+router = "0.6.0"
+yaml-rust = "0.4.2"
+
+[features]
+default = ['clippy']
