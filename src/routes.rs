@@ -35,12 +35,8 @@ fn other_route(req: &mut Request) -> IronResult<Response> {
     Ok(Response::with((status::NotFound, "404 NotFound")))
 }
 
-fn find_user(users: Vec<User>, body: String) -> Option<User> {
-    let v: Value = serde_json::from_str(&body).unwrap();
-    let user_id: &str = v["for_user_id"].as_str().unwrap();
-    let user = users.into_iter().find(|user| user.user_id == user_id);
-
-    return user;
+fn find_user(users: Vec<User>, user_id: &str) -> Option<User> {
+    return users.into_iter().find(|user| user.user_id == user_id);
 }
 
 fn generate_webhook(setting: Setting) -> impl Fn(&mut Request) -> IronResult<Response> {
@@ -48,12 +44,16 @@ fn generate_webhook(setting: Setting) -> impl Fn(&mut Request) -> IronResult<Res
         let body = get_body(req);
         debug!("{:?} {:?}", req.url.to_string(), body);
 
-        let user = find_user(setting.users.to_vec(), body.clone());
-        println!("{:?}", user);
+        let data: Value = serde_json::from_str(&body).unwrap();
+        let user_id = data["for_user_id"].as_str().unwrap();
+        let user = find_user(setting.users.to_vec(), user_id);
 
-
-        if let Some(value) = user {
-            app::delivery(value, body);
+        match user {
+            Some(value) => {
+                info!("recieve: {:?}", value);
+                app::delivery(value, body);
+            },
+            _ => info!("recieve: {:?}", user_id),
         }
 
         Ok(Response::with((status::Ok, "ok")))
