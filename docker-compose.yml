@@ -1,12 +1,9 @@
 version: '2'
 services:
   twistributer:
-    image: twistributer
-    command: /app/twistributer
+    image: flum1025/twistributer
     volumes:
       - ./setting.yml:/app/setting.yml
-    expose:
-      - 3000
     ports:
       - "3000:3000"
     environment:
