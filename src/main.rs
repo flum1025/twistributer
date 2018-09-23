@@ -41,7 +41,7 @@ fn start_server(setting: Setting) {
     chain.link_before(logger_before);
     chain.link_after(logger_after);
 
-    match Iron::new(chain).http("localhost:3000") {
+    match Iron::new(chain).http("0.0.0.0:3000") {
         Result::Ok(listening) => info!("{:?}", listening),
         Result::Err(err) => panic!("{:?}", err),
     }
