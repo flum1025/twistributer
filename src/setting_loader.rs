@@ -5,8 +5,6 @@ use std::io::Read;
 pub struct ApiKey {
     pub consumer_key: String,
     pub consumer_secret: String,
-    pub access_token: String,
-    pub access_token_secret: String,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
